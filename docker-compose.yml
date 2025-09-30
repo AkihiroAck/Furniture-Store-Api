@@ -6,7 +6,8 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     entrypoint: /usr/src/app/entrypoint.sh
 
   db:
@@ -25,15 +26,6 @@ services:
       interval: 2s
       timeout: 5s
       retries: 10
-
-  pgadmin:
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-    ports:
-      - 5050:80
 
 volumes:
   postgres_data:

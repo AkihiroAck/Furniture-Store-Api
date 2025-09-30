@@ -1,15 +1,20 @@
 from rest_framework.serializers import ModelSerializer, StringRelatedField
-from .models import Furniture, Order
+from .models import Furniture, Order, Category
 
 
 class FurnitureSerializer(ModelSerializer):
-    category = StringRelatedField()
+    """
+    Сериализатор для модели мебели.
+    """
     class Meta:
         model = Furniture
-        fields = ['id', 'name', 'price', 'category']
+        fields = '__all__'
         
 
 class OrderSerializer(ModelSerializer):
+    """
+    Сериализатор для модели заказа.
+    """
     class Meta:
         model = Order
         fields = '__all__'

@@ -95,10 +95,25 @@ docker-compose exec backend python project/manage.py createsuperuser
 Возвращает список всей доступной мебели.
 Можно фильтровать данные по категории `?category=category_name`
 
+#### `POST /furniture/`
+Создает новый предмет мебели
+Тело запроса (JSON):
+```json
+{
+  "name": "Название мебели",
+  "price": 150.00,
+  "category": 1
+}
+```
+
 #### `GET /furniture/:id/`
 Возвращает детальную информацию о конкретном товаре по его id.
 
 ### Заказы
+
+#### `GET /orders/`
+Возвращает список заказов по email клиента.
+Можно фильтровать данные по почте `?email=client_email`
 
 #### `POST /orders/`
 Создаёт новый заказ.
@@ -113,11 +128,6 @@ docker-compose exec backend python project/manage.py createsuperuser
 - Сохраняет заказ
 - Рассчитывает итоговую сумму (`total_price`)
 - Возвращает созданный объект заказа
-
-
-#### `GET /orders/`
-Возвращает список заказов по email клиента.
-Можно фильтровать данные по почте `?email=client_email`
 
 ---
 

@@ -1,11 +1,11 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView
+from rest_framework.generics import RetrieveAPIView, ListCreateAPIView
 from .models import Furniture, Order
 from .serializers import FurnitureSerializer, OrderSerializer
 
 
-class FurnitureListView(ListAPIView):
+class FurnitureListView(ListCreateAPIView):
     """
-    Представление для получения списка мебели с возможностью фильтрации по категории (?category=имя_категории).
+    Представление для создания нового предмета мебели и получения списка мебели с возможностью фильтрации по категории (?category=название_категории).
     """
     queryset = Furniture.objects.all()
     serializer_class = FurnitureSerializer
