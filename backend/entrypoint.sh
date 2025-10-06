@@ -6,7 +6,7 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 python manage.py loaddata initial_data.json
 
-# Создать или обнови суперпользователя
+# Создать суперпользователя, если он не существует
 python manage.py shell <<'PY'
 import os
 from django.contrib.auth import get_user_model
