@@ -2,20 +2,33 @@
 
 ## Оглавление
 1. [Описание проекта](#описание-проекта)
-2. [Быстрый запуск](#быстрый-запуск)
+2. [Функционал проекта](#функционал-проекта)
+3. [Быстрый запуск](#быстрый-запуск)
    1. [Клонирование репозитория](#1-клонирование-репозитория)
    2. [Настройка переменных окружения](#2-настройка-переменных-окружения)
    3. [Запуск с помощью Docker Compose](#3-запуск-с-помощью-docker-compose)
    4. [Создание superuser](#4-создание-superuser)
-6. [Используемые порты](#используемые-порты)
-7. [Структура API](#структура-api)
-8. [Технологии](#технологии)
+4. [Используемые порты](#используемые-порты)
+5. [Структура API](#структура-api)
+6. [Технологии](#технологии)
 
 ---
 
 ## Описание проекта
 
 **Furniture-Store-Api** - Это REST API для магазина мебели, реализованный на Django + Django REST Framework.
+
+---
+
+## Функционал проекта
+
+- **Управление мебелью** - Получение списка доступных предметов мебели, а также добавление новых позиций через REST API.  
+- **Управление заказами** - Возможность получения списка заказов и создания новых заказов через API. При создании заказа автоматически рассчитывается итоговая сумма.
+- **Автоматическая отправка писем заказчику** - После успешного создания заказа срабатывает Django сигнал (`m2m_changed`), который отправляет письмо клиенту с подробностями. Что бы выйти из тестового режима измените `EMAIL_BACKEND = os.getenv('EMAIL_BACKEND_TEST')` на `EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')` в [settings.py](https://github.com/AkihiroAck/Furniture-Store-Api/blob/main/backend/project/project/settings.py)
+- **Панель администратора** - Все модели (мебель, заказы и др.) зарегистрированы в Django Admin, что позволяет удобно управлять контентом без доступа к коду.
+- **Автоматическое создание суперпользователя** - При запуске проекта через docker-compose автоматически создаётся суперпользователь с логином и паролем, указанными в `.env` файле.
+- **Фикстуры** - База данных автоматически заполняется начальными данными (категории, мебель и тестовые заказы) из [фикстур](https://github.com/AkihiroAck/Furniture-Store-Api/blob/main/backend/project/order/fixtures/initial_data.json) при первом запуске контейнера.
+- **PostgreSQL** - Используется надёжная и производительная база данных PostgreSQL. Модели оптимизированы с помощью индексации
 
 ---
 
@@ -36,13 +49,19 @@ cd Furniture-Store-Api
 # Django
 SECRET_KEY=django-insecure-*&npc-eipi)b&z!#7e-dppx#0h^ex2)^3)qgyxtxtjf#&(y=xq
 DEBUG = True
+
 EMAIL_BACKEND_TEST = "django.core.mail.backends.console.EmailBackend"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'noreply@xxlmebel.com'
-EMAIL_HOST_PASSWORD = 'email_password'
+EMAIL_HOST_PASSWORD = 'app_password'
+# For EMAIL_HOST_PASSWORD -> https://myaccount.google.com/apppasswords
+
+DJANGO_SUPERUSER_USERNAME=admin
+DJANGO_SUPERUSER_PASSWORD=1234
+
 
 # PostgreSQL
 POSTGRES_DATABASE_NAME=POSTGRESQL_DATABASE_NAME
@@ -50,10 +69,6 @@ POSTGRES_USERNAME=db_user
 POSTGRES_PASSWORD=db_password
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
-
-# pgAdmin
-PGADMIN_EMAIL=admin@admin.com
-PGADMIN_PASSWORD=1234
 ```
 
 ### 3. Запуск с помощью Docker Compose
@@ -128,6 +143,7 @@ docker-compose exec backend python project/manage.py createsuperuser
 - Сохраняет заказ
 - Рассчитывает итоговую сумму (`total_price`)
 - Возвращает созданный объект заказа
+- Отправка письма заказчику по сигналу
 
 ---
 
